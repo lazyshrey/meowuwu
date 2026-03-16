@@ -24,7 +24,7 @@ const THEMES = [
 const FONTS = [
   { id: 'Inter', name: 'Inter', class: 'font-inter' },
   { id: 'Outfit', name: 'Outfit', class: 'font-outfit' },
-  { id: 'Roboto', name: 'Roboto', class: 'font-roboto' },
+  { id: 'Poppins', name: 'Poppins', class: 'font-poppins' },
   { id: 'Geist', name: 'Geist', class: 'font-geist' },
   { id: 'Quicksand', name: 'Quicksand', class: 'font-quicksand' },
 ];

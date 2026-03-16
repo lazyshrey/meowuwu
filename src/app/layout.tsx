@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Quicksand, Geist, Outfit, Inter } from 'next/font/google';
+import { Quicksand, Geist, Outfit, Inter, Poppins } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,12 @@ const quicksand = Quicksand({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-quicksand',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
@@ -79,6 +85,7 @@ export default function RootLayout({
           inter.variable,
           outfit.variable,
           quicksand.variable,
+          poppins.variable,
         )}
       >
         <body className='font-quicksand antialiased'>

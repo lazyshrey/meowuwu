@@ -348,6 +348,43 @@ export default function SettingsPage() {
             </div>
           </Card>
         </section>
+
+        {/* Analytics Section */}
+        <section className='space-y-6'>
+          <div className='flex items-center gap-2 mb-2'>
+            <Trash2 size={18} className='text-red-500' />
+            <h2 className='text-lg font-black text-red-500'>Danger Zone</h2>
+          </div>
+          <Card className='p-8 rounded-[2.5rem] border-2 border-red-50 bg-red-50/10 shadow-sm space-y-6'>
+            <div className='space-y-2'>
+              <p className='font-black text-red-600'>Reset Analytics</p>
+              <p className='text-xs font-bold text-red-400 uppercase tracking-wider'>
+                This will reset all your view counts and link clicks to zero. This action cannot be undone.
+              </p>
+            </div>
+            <Button
+              variant='destructive'
+              className='w-full h-14 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl shadow-red-500/10 transition-all hover:scale-[1.01] active:scale-[0.98]'
+              onClick={async () => {
+                if (confirm('Are you absolutely sure? All your views and clicks will be reset to 0! 🐾')) {
+                  const loadingToast = toast.loading('Purging analytics data...');
+                  try {
+                    const res = await fetch('/api/analytics/reset', { method: 'POST' });
+                    if (res.ok) {
+                      toast.success('Analytics reset successfully! 🐾', { id: loadingToast });
+                    } else {
+                      throw new Error();
+                    }
+                  } catch {
+                    toast.error('Failed to reset analytics', { id: loadingToast });
+                  }
+                }
+              }}
+            >
+              Reset Analytics
+            </Button>
+          </Card>
+        </section>
       </div>
     </div>
   );

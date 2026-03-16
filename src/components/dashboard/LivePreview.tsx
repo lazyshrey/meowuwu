@@ -82,7 +82,7 @@ export default function LivePreview({
                 {
                   'font-inter': theme.font === 'Inter',
                   'font-outfit': theme.font === 'Outfit',
-                  'font-roboto': theme.font === 'Roboto',
+                  'font-poppins': theme.font === 'Poppins',
                   'font-geist': theme.font === 'Geist',
                   'font-quicksand': theme.font === 'Quicksand',
                 }
