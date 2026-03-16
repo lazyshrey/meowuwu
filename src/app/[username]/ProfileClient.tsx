@@ -14,7 +14,7 @@ import {
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import Image from 'next/image';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -56,8 +56,16 @@ interface IUser {
 export default function ProfileClient({ user }: { user: IUser }) {
   const username = user.username;
   const [isHovering, setIsHovering] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
 
   // Performance optimized cursor handling
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 1024);
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
@@ -66,13 +74,15 @@ export default function ProfileClient({ user }: { user: IUser }) {
   const cursorY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX - 20);
       mouseY.set(e.clientY - 20);
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isMobile]);
 
   useEffect(() => {
     const trackVisit = async () => {
@@ -89,7 +99,7 @@ export default function ProfileClient({ user }: { user: IUser }) {
     trackVisit();
   }, [username]);
 
-  const handleLinkClick = async (linkId?: string) => {
+  const handleLinkClick = useCallback(async (linkId?: string) => {
     try {
       await fetch('/api/track', {
         method: 'POST',
@@ -99,20 +109,20 @@ export default function ProfileClient({ user }: { user: IUser }) {
     } catch (err) {
       console.error("Click tracking failed:", err);
     }
-  };
+  }, [username]);
 
-  const theme = user.theme || {
+  const theme = useMemo(() => user.theme || {
     backgroundColor: '#FFF5F7',
     textColor: '#333333',
     buttonColor: '#ec5177',
     font: 'Inter',
     socialPosition: 'top',
-  };
+  }, [user.theme]);
 
-  const shareProfile = () => {
+  const shareProfile = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
     toast.success('Link copied to clipboard! 🐾');
-  };
+  }, []);
 
   return (
     <div className="cursor-none">
@@ -175,24 +185,24 @@ export default function ProfileClient({ user }: { user: IUser }) {
         <div className='absolute inset-0 overflow-hidden pointer-events-none'>
           {/* Animated Orbs */}
           <motion.div
-            animate={{
+            animate={!isMobile ? {
               x: [0, 100, 0],
               y: [0, -50, 0],
               scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className='absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[120px] opacity-20'
-            style={{ backgroundColor: theme.buttonColor }}
+            } : {}}
+            transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+            className='absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[80px] md:blur-[120px] opacity-20'
+            style={{ backgroundColor: theme.buttonColor, willChange: 'transform' }}
           />
           <motion.div
-            animate={{
+            animate={!isMobile ? {
               x: [0, -120, 0],
               y: [0, 80, 0],
               scale: [1, 1.3, 1],
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-            className='absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[140px] opacity-20'
-            style={{ backgroundColor: theme.buttonColor }}
+            } : {}}
+            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+            className='absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[100px] md:blur-[140px] opacity-20'
+            style={{ backgroundColor: theme.buttonColor, willChange: 'transform' }}
           />
 
           {/* Floating Paws Essence */}
@@ -220,8 +230,10 @@ export default function ProfileClient({ user }: { user: IUser }) {
           className='w-full max-w-[580px] rounded-[3.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] flex flex-col items-center overflow-hidden relative'
           style={{
             backgroundColor: `${theme.backgroundColor}dd`,
-            backdropFilter: 'blur(40px)',
+            backdropFilter: isMobile ? 'blur(12px)' : 'blur(40px)',
+            WebkitBackdropFilter: isMobile ? 'blur(12px)' : 'blur(40px)',
             border: '1px solid rgba(255,255,255,0.2)',
+            willChange: 'transform, opacity'
           }}
         >
           {/* Card Header Actions */}
@@ -263,7 +275,7 @@ export default function ProfileClient({ user }: { user: IUser }) {
                     alt={user.username}
                     fill
                     className='object-cover'
-                    unoptimized
+                    priority
                   />
                 ) : (
                   <div

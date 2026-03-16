@@ -124,7 +124,8 @@ export default function LivePreview({
               className='w-[88%] mt-[40%] mb-8 rounded-[2.2rem] shadow-[0_16px_32px_-8px_rgba(0,0,0,0.06)] flex flex-col items-center pt-8 pb-10 px-4 relative border border-white/20 shrink-0'
               style={{ 
                 backgroundColor: 'rgba(255,255,255,0.4)',
-                backdropFilter: 'blur(30px)'
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
               }}
             >
               {/* Profile Avatar */}
