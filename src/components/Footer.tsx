@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { PawPrint, Instagram, Globe, Mail } from 'lucide-react';
+import { PawPrint, Globe, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -20,13 +20,10 @@ export default function Footer() {
               Making the internet a cuter place, one link at a time.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all">
-                <Instagram size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all">
+              <a href="https://meowuwu.in" className="w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all">
                 <Globe size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all">
+              <a href="mailto:contact@lazyshrey.in" className="w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all">
                 <Mail size={18} />
               </a>
             </div>
@@ -39,7 +36,9 @@ export default function Footer() {
             © 2026 Meowuwu Inc. All rights reserved.
           </p>
           <p className="text-xs font-bold text-meow-charcoal/30 flex items-center gap-1.5">
-            Made with <span className="text-meow-accent text-sm">❤️</span> by <span className="text-meow-charcoal">Shrey</span>
+            <Link href="https://lazyshrey.in">
+              Made with <span className="text-meow-accent text-sm">❤️</span> by <span className="text-meow-charcoal">Shrey</span>
+            </Link>
           </p>
         </div>
       </div>

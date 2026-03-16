@@ -12,7 +12,7 @@ export const themeSchema = z.object({
   backgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color hex"),
   buttonColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color hex"),
   textColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color hex"),
-  font: z.enum(["Inter", "Outfit", "Roboto", "Geist"]).optional().default("Inter"),
+  font: z.enum(["Inter", "Outfit", "Poppins", "Geist", "Quicksand"]).optional().default("Inter"),
   socialPosition: z.enum(["top", "bottom"]).optional().default("top"),
 });
 
