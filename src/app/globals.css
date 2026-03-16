@@ -6,6 +6,10 @@
 
 @theme {
   --font-sans: var(--font-quicksand);
+  --font-quicksand: var(--font-quicksand);
+  --font-geist: var(--font-geist);
+  --font-inter: var(--font-inter);
+  --font-outfit: var(--font-outfit);
 
   --color-meow-pink: #FFD1DC;
   --color-meow-mint: #B2EBF2;

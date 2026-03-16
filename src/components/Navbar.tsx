@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SignInButton, SignUpButton, UserButton, Show } from '@clerk/nextjs';
+import { UserButton, Show } from '@clerk/nextjs';
 import { PawPrint } from 'lucide-react';
 
 export default function Navbar() {

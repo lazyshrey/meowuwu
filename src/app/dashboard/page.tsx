@@ -1,49 +1,148 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
 import LinkEditor from "@/components/dashboard/LinkEditor";
-import { PawPrint } from "lucide-react";
-import Image from "next/image";
+import LivePreview from "@/components/dashboard/LivePreview";
+import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { useDebouncedCallback } from "use-debounce";
+import { DashboardSkeleton } from "@/components/dashboard/SkeletonLoader";
+
+interface LinkItem {
+  id: string;
+  title: string;
+  url: string;
+  visible: boolean;
+  variant: 'primary' | 'secondary';
+  clicks: number;
+}
 
 export default function DashboardPage() {
+  const { user } = useUser();
+  const [links, setLinks] = useState<LinkItem[]>([]);
+  const [theme, setTheme] = useState({
+    backgroundColor: "#FFF5F7",
+    buttonColor: "#ec5177",
+    textColor: "#333333",
+    font: "Inter",
+    socialPosition: "top" as "top" | "bottom"
+  });
+  const [bio, setBio] = useState("");
+  const [username, setUsername] = useState("");
+  const [socials, setSocials] = useState({});
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [showBranding, setShowBranding] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const initialFetchDone = useRef(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("/api/user", { cache: "no-store" });
+        const data = await response.json();
+        
+        if (data) {
+          const transformedLinks = data.links.map((l: { _id: string; title: string; url: string; isVisible: boolean; variant?: string; clicks?: number }) => ({
+            id: l._id || Math.random().toString(36).substr(2, 9),
+            title: l.title,
+            url: l.url,
+            visible: l.isVisible,
+            variant: (l.variant as 'primary' | 'secondary') || 'primary',
+            clicks: l.clicks || 0
+          }));
+          
+          setLinks(transformedLinks);
+          setBio(data.bio || "");
+          setUsername(data.username || "");
+          setAvatarUrl(data.avatarUrl || "");
+          setSocials(data.socials || {});
+          setShowBranding(data.showBranding ?? true);
+          if (data.theme) {
+            setTheme({
+              backgroundColor: data.theme.backgroundColor || '#FFF5F7',
+              buttonColor: data.theme.buttonColor || '#ec5177',
+              textColor: data.theme.textColor || '#333333',
+              font: data.theme.font || 'Inter',
+              socialPosition: data.theme.socialPosition || 'top'
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+        toast.error("Failed to load your data");
+      } finally {
+        setIsLoading(false);
+        initialFetchDone.current = true;
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const debouncedSave = useDebouncedCallback(async (linksToSave: LinkItem[]) => {
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          links: linksToSave.map(l => ({
+            title: l.title,
+            url: l.url,
+            isVisible: l.visible,
+            variant: l.variant || 'primary',
+            clicks: l.clicks
+          }))
+        })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error?.fieldErrors?.links?.[0] || "Failed to save");
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to save changes";
+      toast.error(message);
+    } finally {
+      setIsSaving(false);
+    }
+  }, 1000);
+
+  const handleLinksChange = (newLinks: LinkItem[]) => {
+    setLinks(newLinks);
+    debouncedSave(newLinks);
+  };
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
-    <div className="flex h-full gap-8">
+    <div className="flex h-full w-full relative">
+      {/* Saving Indicator */}
+      {isSaving && (
+        <div className="absolute top-6 right-8 z-50 flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-lg border border-neutral-100 animate-in fade-in slide-in-from-top-4">
+          <div className="w-2 h-2 bg-meow-accent rounded-full animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-wider text-meow-accent">Saving Data</span>
+        </div>
+      )}
+
       {/* Editor Section */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto pr-4 custom-scrollbar">
-        <LinkEditor />
+      <div className="flex-1 min-w-0 overflow-y-auto no-scrollbar pb-20">
+        <LinkEditor links={links} onLinksChange={handleLinksChange} username={username} />
       </div>
-
-      {/* Preview Section */}
-      <div className="hidden lg:flex w-96 flex-col">
-        <div className="flex items-center justify-between mb-8 pr-4">
-          <h2 className="text-xl font-bold text-meow-charcoal">Live Preview</h2>
-          <div className="flex items-center gap-1 text-sm bg-meow-accent/10 text-meow-accent px-3 py-1 rounded-full font-bold">
-            <span className="w-2 h-2 bg-meow-accent rounded-full animate-pulse"></span>
-            Syncing
-          </div>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-[320px] h-[640px] glass-card border-12 border-white/60 rounded-4xl shadow-2xl relative overflow-hidden flex flex-col p-8 items-center text-center">
-             <div className="absolute inset-0 bg-meow-pink -z-10 opacity-30"></div>
-             
-             <div className="w-20 h-20 bg-white rounded-full mb-4 border-4 border-white shadow-lg relative cat-ears">
-                <Image src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=preview" alt="Avatar" fill className="rounded-full object-cover" unoptimized />
-             </div>
-             <h3 className="font-bold text-xl mb-1 text-meow-charcoal">@username</h3>
-             <p className="text-xs text-meow-charcoal/60 mb-8 font-medium">Digital Creator 🐾</p>
-
-             <div className="w-full space-y-3">
-               {[1, 2, 3].map((i) => (
-                 <div key={i} className="w-full h-12 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 flex items-center px-4 shadow-sm">
-                   <div className="w-6 h-6 bg-meow-accent/20 rounded-lg mr-3"></div>
-                   <div className="h-2 w-24 bg-meow-charcoal/10 rounded"></div>
-                 </div>
-               ))}
-             </div>
-
-             <div className="mt-auto pt-8 opacity-20 flex items-center gap-1 font-black text-[10px] tracking-widest uppercase">
-               <PawPrint size={10} /> Meowuwu
-             </div>
-          </div>
-        </div>
+      {/* Preview Section - Only visible on Large Screens */}
+      <div className="hidden xl:flex w-[480px] border-l border-neutral-100 py-12 px-10 flex-col bg-white sticky top-0 h-screen">
+        <LivePreview 
+          username={username || user?.username || "shrey"}
+          avatarUrl={avatarUrl || user?.imageUrl}
+          bio={bio}
+          links={links} 
+          socials={socials}
+          showBranding={showBranding}
+          theme={theme}
+        />
       </div>
     </div>
   );
