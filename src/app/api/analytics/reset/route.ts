@@ -18,16 +18,20 @@ export async function POST() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Reset total views
+    // Reset views and unique views
     user.views = 0;
+    user.uniqueViews = 0;
 
     // Reset clicks for all links
-    if (user.links && user.links.length > 0) {
-      user.links = user.links.map((link: ILink) => ({
-        ...(link as any).toObject(),
-        clicks: 0,
-      }));
+    if (user.links) {
+      user.links.forEach((link: any) => {
+        link.clicks = 0;
+      });
     }
+
+    // Clear unique visits from the Visit collection
+    const Visit = (await import('@/models/Visit')).default;
+    await Visit.deleteMany({ username: user.username });
 
     await user.save();
 

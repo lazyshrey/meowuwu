@@ -28,6 +28,7 @@ export interface IUser extends Document {
     description?: string;
   };
   views?: number;
+  uniqueViews?: number;
   showBranding?: boolean;
   theme: {
     backgroundColor: string;
@@ -38,6 +39,7 @@ export interface IUser extends Document {
     socialPosition?: 'top' | 'bottom';
   };
   links: ILink[];
+  isActive?: boolean;
   updatedAt: Date;
 }
 
@@ -59,7 +61,9 @@ const UserSchema: Schema = new Schema({
     description: { type: String, default: '' },
   },
   views: { type: Number, default: 0 },
+  uniqueViews: { type: Number, default: 0 },
   showBranding: { type: Boolean, default: true },
+  isActive: { type: Boolean, default: true },
   theme: {
     backgroundColor: { type: String, default: '#FFD1DC' },
     cardColor: { type: String, default: 'rgba(255, 255, 255, 0.4)' },

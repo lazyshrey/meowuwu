@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 import connectToDatabase from '@/lib/mongodb';
 import User from '@/models/User';
 import { userUpdateSchema } from '@/lib/validations';
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
       socials,
       seo,
       showBranding,
+      isActive,
     } = validatedData.data;
 
     await connectToDatabase();
@@ -109,12 +111,19 @@ export async function POST(req: Request) {
     if (socials !== undefined) updateData.socials = socials;
     if (seo !== undefined) updateData.seo = seo;
     if (showBranding !== undefined) updateData.showBranding = showBranding;
+    if (isActive !== undefined) updateData.isActive = isActive;
 
     const user = await User.findOneAndUpdate(
       { clerkId: userId },
       { $set: updateData },
       { new: true, upsert: true },
     );
+
+    // Instant Cache Revalidation:
+    // This pushes the new data to the static edge immediately
+    if (user?.username) {
+      revalidatePath(`/${user.username}`);
+    }
 
     return NextResponse.json(user);
   } catch (error) {

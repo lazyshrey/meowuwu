@@ -1,33 +1,40 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
+import { getUserByUsername } from '@/lib/data';
 import ProfileClient from './ProfileClient';
 
 interface Props {
   params: Promise<{ username: string }>;
 }
 
+export const revalidate = 60; // ISR Optimization: Revalidate every 60 seconds
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username } = await params;
-  
-  await connectToDatabase();
-  const user = await User.findOne({ username }).lean();
+  const user = await getUserByUsername(username);
 
-  if (!user) {
+  if (!user || user.isActive === false) {
     return {
       title: 'User Not Found | Meowuwu',
+      icons: {
+        icon: '/meowuwu.png',
+        apple: '/meowuwu.png',
+      },
     };
   }
 
-  // Use saved SEO data or fallback to defaults
+  // Optimize title and description for search engines
   const title = user.seo?.title || `@${user.username} | Meowuwu`;
   const description = user.seo?.description || user.bio || `Check out @${user.username}'s profile on Meowuwu! 🐾`;
-  const image = user.avatarUrl || '/meowuwu.png'; // Fallback to site logo
+  const image = user.avatarUrl || '/meowuwu.png';
 
   return {
     title,
     description,
+    icons: {
+      icon: '/meowuwu.png',
+      apple: '/meowuwu.png',
+    },
     openGraph: {
       title,
       description,
@@ -46,18 +53,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PublicProfile({ params }: Props) {
   const { username } = await params;
-  
-  await connectToDatabase();
-  // Using lean() for better performance as we don't need mongoose document features here
-  const user = await User.findOne({ username }).lean();
+  const user = await getUserByUsername(username);
 
-  if (!user) {
+  if (!user || user.isActive === false) {
     return notFound();
   }
 
-  // Convert MongoDB document to a plain object that can be passed to the Client Component
-  // We need to handle the _id conversion to string and other potentially complex types
   const plainUser = JSON.parse(JSON.stringify(user));
 
-  return <ProfileClient user={plainUser} />;
+  // JSON-LD Structured Data for Enhanced SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": user.username,
+      "description": user.bio,
+      "image": user.avatarUrl,
+      "url": `https://meowuwu.in/${user.username}`
+    }
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProfileClient user={plainUser} />
+    </>
+  );
 }

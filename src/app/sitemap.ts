@@ -17,7 +17,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let userRoutes: MetadataRoute.Sitemap = [];
   try {
     await connectToDatabase();
-    const users = await User.find({}, 'username updatedAt').lean();
+    // Only include active profiles in the sitemap
+    const users = await User.find({ isActive: { $ne: false } }, 'username updatedAt')
+      .sort({ updatedAt: -1 })
+      .limit(50000)
+      .lean();
 
     userRoutes = users.map((user: any) => ({
       url: `${baseUrl}/${user.username}`,

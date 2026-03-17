@@ -22,7 +22,7 @@ interface LinkStat {
 }
 
 export default function AnalyticsPage() {
-  const [data, setData] = useState<{ views: number; links: LinkStat[] } | null>(null);
+  const [data, setData] = useState<{ views: number; uniqueViews: number; links: LinkStat[] } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function AnalyticsPage() {
         const userData = await res.json();
         setData({
           views: userData.views || 0,
+          uniqueViews: userData.uniqueViews || 0,
           links: userData.links || []
         });
       } catch (err) {
@@ -46,12 +47,14 @@ export default function AnalyticsPage() {
   if (isLoading) return <DashboardSkeleton />;
 
   const totalClicks = data?.links.reduce((acc, curr) => acc + (curr.clicks || 0), 0) || 0;
-  const ctr = data?.views ? ((totalClicks / data.views) * 100).toFixed(1) : "0.0";
+  // CTR is better calculated based on unique visits to avoid inflation from refreshes
+  const ctr = data?.uniqueViews ? ((totalClicks / data.uniqueViews) * 100).toFixed(1) : "0.0";
 
   const STATS = [
-    { label: "Total Views", value: data?.views.toLocaleString() || "0", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Total Clicks", value: totalClicks.toLocaleString(), icon: MousePointer2, color: "text-meow-accent", bg: "bg-meow-accent/10" },
-    { label: "Avg. CTR", value: `${ctr}%`, icon: TrendingUp, color: "text-green-500", bg: "bg-green-50" },
+    { label: "Unique Visitors", value: data?.uniqueViews.toLocaleString() || "0", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+    { label: "Total Views", value: data?.views.toLocaleString() || "0", icon: MousePointer2, color: "text-purple-500", bg: "bg-purple-50" },
+    { label: "Total Clicks", value: totalClicks.toLocaleString(), icon: ExternalLink, color: "text-meow-accent", bg: "bg-meow-accent/10" },
+    { label: "Unique CTR", value: `${ctr}%`, icon: TrendingUp, color: "text-green-500", bg: "bg-green-50" },
   ];
 
   return (
@@ -63,7 +66,7 @@ export default function AnalyticsPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {STATS.map((stat) => (
           <Card key={stat.label} className="p-6 rounded-[2.5rem] border-2 border-neutral-50 shadow-sm hover:shadow-md transition-shadow flex flex-col">
             <div className="flex justify-between items-start mb-4">

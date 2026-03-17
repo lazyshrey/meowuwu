@@ -34,17 +34,43 @@ export function DashboardSkeleton() {
   );
 }
 
+import { motion } from "framer-motion";
+import { PawPrint } from "lucide-react";
+
 export function ProfileSkeleton() {
-    return (
-        <div className="min-h-screen py-20 px-6 flex flex-col items-center space-y-8 bg-[#FFF5F7]">
-            <Skeleton className="w-32 h-32 rounded-full" />
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-64" />
-            <div className="w-full max-w-sm space-y-4 pt-10">
-                {[1, 2, 3, 4].map(i => (
-                    <Skeleton key={i} className="w-full h-16 rounded-[2rem]" />
-                ))}
-            </div>
+  return (
+    <div className="min-h-screen py-20 px-6 flex flex-col items-center justify-center space-y-8 bg-[#FFF5F7]">
+      <motion.div
+        animate={{ 
+          scale: [1, 1.1, 1],
+          rotate: [0, 5, -5, 0]
+        }}
+        transition={{ 
+          duration: 2, 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="w-24 h-24 bg-white/60 backdrop-blur-md rounded-[2rem] flex items-center justify-center text-meow-accent shadow-sm border-2 border-white"
+      >
+        <PawPrint size={48} strokeWidth={2.5} />
+      </motion.div>
+      
+      <div className="flex flex-col items-center space-y-4">
+        <Skeleton className="h-4 w-32 rounded-full opacity-50" />
+        <div className="flex gap-2">
+            <div className="w-2 h-2 rounded-full bg-meow-accent/20 animate-bounce [animation-delay:-0.3s]" />
+            <div className="w-2 h-2 rounded-full bg-meow-accent/20 animate-bounce [animation-delay:-0.15s]" />
+            <div className="w-2 h-2 rounded-full bg-meow-accent/20 animate-bounce" />
         </div>
-    );
+      </div>
+
+      <div className="w-full max-w-sm space-y-4 pt-10">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="w-full h-16 bg-white/40 backdrop-blur-sm rounded-[2rem] border-2 border-white/50 flex items-center px-6">
+            <Skeleton className="h-2 w-1/2 opacity-30" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

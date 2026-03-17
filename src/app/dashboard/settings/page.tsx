@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useUser, SignOutButton, useClerk } from '@clerk/nextjs';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -24,6 +25,7 @@ import {
   Search,
   LogOut,
   Sparkles,
+  HelpCircle,
 } from 'lucide-react';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import { Separator } from '@/components/ui/separator';
@@ -36,6 +38,7 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showBranding, setShowBranding] = useState(true);
+  const [isActive, setIsActive] = useState(true);
   const [seo, setSeo] = useState({ title: '', description: '' });
   const [socials, setSocials] = useState({
     instagram: '',
@@ -62,6 +65,7 @@ export default function SettingsPage() {
         const data = await res.json();
         if (data) {
           setShowBranding(data.showBranding ?? true);
+          setIsActive(data.isActive ?? true);
           if (data.seo) setSeo(data.seo);
           if (data.socials) {
             setSocials({
@@ -296,6 +300,31 @@ export default function SettingsPage() {
           </Card>
         </section>
 
+        {/* Profile Status Section */}
+        <section className='space-y-6'>
+          <div className='flex items-center gap-2 mb-2'>
+            <Globe size={18} className='text-meow-accent' />
+            <h2 className='text-lg font-black'>Profile Status</h2>
+          </div>
+          <Card className='p-0 overflow-hidden rounded-[2.5rem] border-2 border-neutral-50 shadow-sm'>
+            <div className='p-8 flex items-center justify-between hover:bg-neutral-50/50 transition-colors'>
+              <div className='space-y-1'>
+                <p className='font-black'>Enable Public Profile</p>
+                <p className='text-xs font-bold opacity-30 uppercase tracking-wider'>
+                  Make your meow-link visible to the world
+                </p>
+              </div>
+              <Switch
+                checked={isActive}
+                onCheckedChange={(val) => {
+                  setIsActive(val);
+                  handleSave({ isActive: val });
+                }}
+              />
+            </div>
+          </Card>
+        </section>
+
         {/* Branding preferences */}
         <section className='space-y-6'>
           <div className='flex items-center gap-2 mb-2'>
@@ -347,6 +376,27 @@ export default function SettingsPage() {
               </SignOutButton>
             </div>
           </Card>
+        </section>
+
+        {/* Support Section */}
+        <section className='space-y-6'>
+          <div className='flex items-center gap-2 mb-2'>
+            <HelpCircle size={18} className='text-meow-accent' />
+            <h2 className='text-lg font-black'>Support</h2>
+          </div>
+          <Link href="/support">
+            <Card className="p-8 rounded-[2.5rem] border-2 border-dashed border-neutral-100 bg-neutral-50/30 hover:bg-meow-accent/5 hover:border-meow-accent/20 transition-all group flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-meow-charcoal/30 group-hover:text-meow-accent transition-colors shadow-sm">
+                  <HelpCircle size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-meow-charcoal">Need help? 🐾</h3>
+                  <p className="text-sm font-bold text-meow-charcoal/30 uppercase tracking-widest">Visit our Help Center & Guides</p>
+                </div>
+              </div>
+            </Card>
+          </Link>
         </section>
 
         {/* Analytics Section */}

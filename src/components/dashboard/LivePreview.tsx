@@ -12,6 +12,13 @@ import {
   Video,
   ExternalLink,
   User as UserIcon,
+  Link as LinkIcon,
+  Music,
+  Heart,
+  Star,
+  Globe,
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import { cn } from '@/lib/utils';
@@ -23,6 +30,7 @@ interface LinkItem {
   id: string;
   title: string;
   url: string;
+  icon: string;
   visible: boolean;
   variant: 'primary' | 'secondary';
   clicks: number;
@@ -213,14 +221,40 @@ export default function LivePreview({
                           borderColor: variant === 'primary' ? 'transparent' : `${theme.buttonColor}15`,
                         }}
                       >
-                        <span 
-                          className={cn(
-                            'text-[10px] font-black tracking-tight',
-                            variant === 'primary' ? 'text-white' : 'text-meow-charcoal'
-                          )}
-                        >
-                          {link.title}
-                        </span>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div
+                            className={cn(
+                              'w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-sm',
+                              variant === 'primary' ? 'bg-white/20 text-white' : 'bg-neutral-50 text-neutral-400'
+                            )}
+                          >
+                            {(() => {
+                              const Icon = {
+                                paw: PawPrint,
+                                link: LinkIcon,
+                                instagram: Instagram,
+                                twitter: Twitter,
+                                youtube: Youtube,
+                                github: Github,
+                                globe: Globe,
+                                music: Music,
+                                heart: Heart,
+                                star: Star,
+                                video: Video,
+                                sparkles: Sparkles,
+                              }[link.icon as string] || LinkIcon;
+                              return <Icon size={12} />;
+                            })()}
+                          </div>
+                          <span 
+                            className={cn(
+                              'text-[10px] font-black tracking-tight truncate',
+                              variant === 'primary' ? 'text-white' : 'text-meow-charcoal'
+                            )}
+                          >
+                            {link.title}
+                          </span>
+                        </div>
                         <div
                           className='w-5 h-5 flex items-center justify-center opacity-40'
                           style={{ color: variant === 'primary' ? 'white' : theme.buttonColor }}

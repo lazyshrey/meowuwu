@@ -10,6 +10,13 @@ import {
   Github,
   Twitter,
   Video,
+  Link as LinkIcon,
+  Music,
+  Heart,
+  Star,
+  Globe,
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import Image from 'next/image';
@@ -21,6 +28,7 @@ import { cn } from '@/lib/utils';
 interface ILink {
   title: string;
   url: string;
+  icon?: string;
   isVisible: boolean;
   variant?: 'primary' | 'secondary';
   _id?: string;
@@ -86,11 +94,18 @@ export default function ProfileClient({ user }: { user: IUser }) {
 
   useEffect(() => {
     const trackVisit = async () => {
+      // Get or create a persistent visitor ID for unique tracking
+      let visitorId = localStorage.getItem('meow_visitor_id');
+      if (!visitorId) {
+        visitorId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('meow_visitor_id', visitorId);
+      }
+
       try {
         await fetch('/api/track', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, type: 'view' }),
+          body: JSON.stringify({ username, type: 'view', visitorId }),
         });
       } catch (err) {
         console.error("Visit tracking failed:", err);
@@ -100,11 +115,12 @@ export default function ProfileClient({ user }: { user: IUser }) {
   }, [username]);
 
   const handleLinkClick = useCallback(async (linkId?: string) => {
+    const visitorId = localStorage.getItem('meow_visitor_id');
     try {
       await fetch('/api/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, type: 'click', linkId }),
+        body: JSON.stringify({ username, type: 'click', linkId, visitorId }),
       });
     } catch (err) {
       console.error("Click tracking failed:", err);
@@ -155,15 +171,16 @@ export default function ProfileClient({ user }: { user: IUser }) {
             className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.1)] opacity-80"
           />
           
-          {/* Hover Glow Essence */}
-          {isHovering && (
-            <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1.5, opacity: 1 }}
-              className="absolute inset-0 rounded-full blur-xl -z-10"
-              style={{ backgroundColor: `${theme.buttonColor}40` }}
-            />
-          )}
+          {/* Hover Glow Essence - Refined permanent mounting for smoother transitions */}
+          <motion.div
+            animate={{ 
+              scale: isHovering ? 1.5 : 0.5, 
+              opacity: isHovering ? 1 : 0 
+            }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute inset-0 rounded-full blur-xl -z-10"
+            style={{ backgroundColor: `${theme.buttonColor}40` }}
+          />
         </div>
       </motion.div>
 
@@ -394,28 +411,49 @@ export default function ProfileClient({ user }: { user: IUser }) {
                         whileTap={{ scale: 0.99 }}
                         onClick={() => handleLinkClick(link._id)}
                         className={cn(
-                          'group relative w-full h-[72px] rounded-2xl flex items-center justify-between px-8 border-2 transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] overflow-hidden',
+                          'group relative w-full h-[72px] rounded-2xl flex items-center justify-between px-8 border-2 transition-all duration-150 shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.1)] overflow-hidden',
                           variant === 'primary' ? 'border-transparent' : ''
                         )}
                         style={{
                           backgroundColor: variant === 'primary' ? theme.buttonColor : 'white',
-                          borderColor: variant === 'primary' ? 'transparent' : `${theme.buttonColor}20`,
+                          borderColor: variant === 'primary' ? 'transparent' : `${theme.buttonColor}15`,
                         }}
                       >
-                        {/* Hover Bar Essence */}
-                        <div
-                          className='absolute top-0 left-0 w-1.5 h-full opacity-0 group-hover:opacity-100 transition-opacity'
-                          style={{ backgroundColor: variant === 'primary' ? 'rgba(255,255,255,0.2)' : theme.buttonColor }}
-                        />
     
-                        <span 
-                          className={cn(
-                            'text-base md:text-xl font-black tracking-tight',
-                            variant === 'primary' ? 'text-white' : 'text-[#1E231E]'
-                          )}
-                        >
-                          {link.title}
-                        </span>
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div 
+                            className={cn(
+                              "w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+                              variant === 'primary' ? "bg-white/20 text-white" : "bg-neutral-50 text-neutral-400"
+                            )}
+                          >
+                            {(() => {
+                              const SelectedIcon = {
+                                paw: PawPrint,
+                                link: LinkIcon,
+                                instagram: Instagram,
+                                twitter: Twitter,
+                                youtube: Youtube,
+                                github: Github,
+                                globe: Globe,
+                                music: Music,
+                                heart: Heart,
+                                star: Star,
+                                video: Video,
+                                sparkles: Sparkles,
+                              }[link.icon as string] || LinkIcon;
+                              return <SelectedIcon size={20} className="md:w-6 md:h-6" />;
+                            })()}
+                          </div>
+                          <span 
+                            className={cn(
+                              'text-base md:text-xl font-black tracking-tight truncate',
+                              variant === 'primary' ? 'text-white' : 'text-[#1E231E]'
+                            )}
+                          >
+                            {link.title}
+                          </span>
+                        </div>
                         <div
                           className='w-8 h-8 rounded-lg flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity'
                           style={{ color: variant === 'primary' ? 'white' : theme.buttonColor }}

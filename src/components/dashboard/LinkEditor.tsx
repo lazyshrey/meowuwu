@@ -8,8 +8,25 @@ import {
   Trash2, 
   Smile, 
   ShoppingBag,
-  MousePointer2
+  MousePointer2,
+  PawPrint,
+  Instagram,
+  Twitter,
+  Youtube,
+  Github,
+  Music,
+  Heart,
+  Star,
+  Globe,
+  Video,
+  Sparkles,
+  ChevronDown
 } from "lucide-react";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -38,10 +55,26 @@ interface LinkItem {
   id: string;
   title: string;
   url: string;
+  icon: string;
   visible: boolean;
   variant: 'primary' | 'secondary';
   clicks: number;
 }
+
+const AVAILABLE_ICONS = [
+  { name: 'paw', icon: PawPrint },
+  { name: 'link', icon: LinkIcon },
+  { name: 'instagram', icon: Instagram },
+  { name: 'twitter', icon: Twitter },
+  { name: 'youtube', icon: Youtube },
+  { name: 'github', icon: Github },
+  { name: 'globe', icon: Globe },
+  { name: 'music', icon: Music },
+  { name: 'heart', icon: Heart },
+  { name: 'star', icon: Star },
+  { name: 'video', icon: Video },
+  { name: 'sparkles', icon: Sparkles },
+];
 
 interface LinkEditorProps {
   links: LinkItem[];
@@ -90,6 +123,37 @@ function SortableLinkItem({ link, updateLink, deleteLink }: SortableLinkItemProp
           className="mt-4 text-neutral-300 cursor-grab active:cursor-grabbing hover:text-meow-accent transition-colors p-1 touch-none"
         >
           <GripVertical size={24} />
+        </div>
+
+        {/* Icon Picker */}
+        <div className="mt-2">
+           <Popover>
+              <PopoverTrigger className="w-14 h-14 rounded-2xl bg-neutral-50 border-2 border-neutral-100 flex items-center justify-center text-meow-charcoal/40 hover:border-meow-accent/20 hover:bg-white transition-all group/icon relative">
+                 {(() => {
+                   const IconComp = AVAILABLE_ICONS.find(i => i.name === link.icon)?.icon || LinkIcon;
+                   return <IconComp size={24} />;
+                 })()}
+                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white border border-neutral-100 rounded-full flex items-center justify-center shadow-sm text-[8px]">
+                    <ChevronDown size={10} />
+                 </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3 rounded-2xl" align="start">
+                <div className="grid grid-cols-4 gap-2">
+                  {AVAILABLE_ICONS.map((icon) => (
+                    <button
+                      key={icon.name}
+                      onClick={() => updateLink(link.id, { icon: icon.name })}
+                      className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:bg-meow-accent/5 hover:text-meow-accent",
+                        link.icon === icon.name ? "bg-meow-accent text-white hover:bg-meow-accent" : "text-meow-charcoal/40"
+                      )}
+                    >
+                      <icon.icon size={20} />
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+           </Popover>
         </div>
 
         {/* Main Info */}
@@ -202,6 +266,7 @@ export default function LinkEditor({ links, onLinksChange, username }: LinkEdito
       id: Math.random().toString(36).substr(2, 9),
       title: "New Link",
       url: "https://meowuwu.in",
+      icon: 'paw',
       visible: true,
       variant: 'primary',
       clicks: 0

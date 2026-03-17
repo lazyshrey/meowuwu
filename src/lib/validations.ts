@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { RESERVED_USERNAMES } from "./constants";
 
 export const linkSchema = z.object({
   title: z.string().min(1, "Title is required").max(50, "Title is too long"),
   url: z.string().url("Invalid URL").or(z.string().startsWith("https://").min(8)),
+  icon: z.string().optional().default("paw"),
   isVisible: z.boolean().default(true),
   variant: z.enum(["primary", "secondary"]).default("primary"),
   clicks: z.number().int().nonnegative().default(0),
@@ -35,7 +37,10 @@ export const userUpdateSchema = z.object({
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username must be less than 20 characters")
     .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
-    .optional(),
+    .optional()
+    .refine((val) => !val || !RESERVED_USERNAMES.includes(val.toLowerCase()), {
+      message: "This username is reserved and cannot be used",
+    }),
   bio: z.string().max(160, "Bio is too long").optional(),
   avatarUrl: z.string().url().optional().or(z.string().length(0)),
   links: z.array(linkSchema).max(10, "You can have a maximum of 10 links").optional(),
@@ -43,4 +48,5 @@ export const userUpdateSchema = z.object({
   socials: socialsSchema.optional(),
   seo: seoSchema.optional(),
   showBranding: z.boolean().optional(),
+  isActive: z.boolean().optional(),
 });

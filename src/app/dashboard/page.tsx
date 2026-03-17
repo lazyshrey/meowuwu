@@ -12,6 +12,7 @@ interface LinkItem {
   id: string;
   title: string;
   url: string;
+  icon: string;
   visible: boolean;
   variant: 'primary' | 'secondary';
   clicks: number;
@@ -43,10 +44,11 @@ export default function DashboardPage() {
         const data = await response.json();
         
         if (data) {
-          const transformedLinks = data.links.map((l: { _id: string; title: string; url: string; isVisible: boolean; variant?: string; clicks?: number }) => ({
+          const transformedLinks = data.links.map((l: { _id: string; title: string; url: string; isVisible: boolean; icon?: string; variant?: string; clicks?: number }) => ({
             id: l._id || Math.random().toString(36).substr(2, 9),
             title: l.title,
             url: l.url,
+            icon: l.icon || 'paw',
             visible: l.isVisible,
             variant: (l.variant as 'primary' | 'secondary') || 'primary',
             clicks: l.clicks || 0
@@ -90,6 +92,7 @@ export default function DashboardPage() {
           links: linksToSave.map(l => ({
             title: l.title,
             url: l.url,
+            icon: l.icon || 'paw',
             isVisible: l.visible,
             variant: l.variant || 'primary',
             clicks: l.clicks

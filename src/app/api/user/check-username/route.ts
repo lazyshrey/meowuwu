@@ -17,6 +17,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ available: true });
     }
 
+    // Check reserved list first
+    const { RESERVED_USERNAMES } = await import("@/lib/constants");
+    if (RESERVED_USERNAMES.includes(username)) {
+      return NextResponse.json({ available: false });
+    }
+
     await connectToDatabase();
     
     // Check if username exists and doesn't belong to the current user
