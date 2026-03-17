@@ -19,6 +19,8 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -85,7 +87,7 @@ function SortableLinkItem({ link, updateLink, deleteLink }: SortableLinkItemProp
         <div 
           {...attributes} 
           {...listeners}
-          className="mt-4 text-neutral-300 cursor-grab active:cursor-grabbing hover:text-meow-accent transition-colors p-1"
+          className="mt-4 text-neutral-300 cursor-grab active:cursor-grabbing hover:text-meow-accent transition-colors p-1 touch-none"
         >
           <GripVertical size={24} />
         </div>
@@ -169,7 +171,17 @@ function SortableLinkItem({ link, updateLink, deleteLink }: SortableLinkItemProp
 
 export default function LinkEditor({ links, onLinksChange, username }: LinkEditorProps) {
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

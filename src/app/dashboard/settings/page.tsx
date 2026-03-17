@@ -124,7 +124,7 @@ export default function SettingsPage() {
       <header className='mb-12'>
         <h1 className='text-3xl font-black tracking-tight'>Settings</h1>
         <p className='text-sm font-bold opacity-40 mt-1'>
-          Configure your cat command center 🐾
+          Configure your cat command center
         </p>
       </header>
 

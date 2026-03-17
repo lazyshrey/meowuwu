@@ -211,7 +211,7 @@ export default function AppearancePage() {
             Appearance
           </h1>
           <p className='text-sm font-bold text-meow-charcoal/40 mt-1'>
-            Make your profile as unique as your cat 🐾
+            Make your profile as unique as your cat
           </p>
         </header>
 
