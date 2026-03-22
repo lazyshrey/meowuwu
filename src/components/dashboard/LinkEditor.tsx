@@ -111,122 +111,127 @@ function SortableLinkItem({ link, updateLink, deleteLink }: SortableLinkItemProp
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative bg-white border-2 border-neutral-50 rounded-[2.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-neutral-100",
+        "group relative bg-white border-2 border-neutral-50 rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:border-neutral-100",
         isDragging && "shadow-2xl border-meow-accent/20"
       )}
     >
-      <div className="flex items-start gap-6">
+      {/* Delete Button - Top Right Absolute on Mobile */}
+      <button
+        onClick={() => deleteLink(link.id)}
+        className="absolute top-4 right-4 md:static z-10 w-8 h-8 flex items-center justify-center text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all md:hidden"
+      >
+        <Trash2 size={16} />
+      </button>
+
+      <div className="flex items-start gap-4 md:gap-6">
         {/* Drag Handle */}
         <div 
           {...attributes} 
           {...listeners}
-          className="mt-4 text-neutral-300 cursor-grab active:cursor-grabbing hover:text-meow-accent transition-colors p-1 touch-none"
+          className="mt-4 text-neutral-300 cursor-grab active:cursor-grabbing hover:text-meow-accent transition-colors p-1 touch-none shrink-0"
         >
-          <GripVertical size={24} />
+          <GripVertical size={22} />
         </div>
 
-        {/* Icon Picker */}
-        <div className="mt-2">
-           <Popover>
-              <PopoverTrigger className="w-14 h-14 rounded-2xl bg-neutral-50 border-2 border-neutral-100 flex items-center justify-center text-meow-charcoal/40 hover:border-meow-accent/20 hover:bg-white transition-all group/icon relative">
-                 {(() => {
-                   const IconComp = AVAILABLE_ICONS.find(i => i.name === link.icon)?.icon || LinkIcon;
-                   return <IconComp size={24} />;
-                 })()}
-                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white border border-neutral-100 rounded-full flex items-center justify-center shadow-sm text-[8px]">
-                    <ChevronDown size={10} />
-                 </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-64 p-3 rounded-2xl" align="start">
-                <div className="grid grid-cols-4 gap-2">
-                  {AVAILABLE_ICONS.map((icon) => (
-                    <button
-                      key={icon.name}
-                      onClick={() => updateLink(link.id, { icon: icon.name })}
-                      className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:bg-meow-accent/5 hover:text-meow-accent",
-                        link.icon === icon.name ? "bg-meow-accent text-white hover:bg-meow-accent" : "text-meow-charcoal/40"
-                      )}
-                    >
-                      <icon.icon size={20} />
-                    </button>
-                  ))}
-                </div>
-              </PopoverContent>
-           </Popover>
-        </div>
+        {/* Main Info Wrapper */}
+        <div className="flex-1 min-w-0 flex flex-col gap-5">
+           <div className="flex items-start gap-4">
+              {/* Icon Picker */}
+              <div className="shrink-0 pt-1">
+                <Popover>
+                    <PopoverTrigger className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-neutral-50 border-2 border-neutral-100 flex items-center justify-center text-meow-charcoal/40 hover:border-meow-accent/20 hover:bg-white transition-all group/icon relative">
+                      {(() => {
+                        const IconComp = AVAILABLE_ICONS.find(i => i.name === link.icon)?.icon || LinkIcon;
+                        return <IconComp size={22} />;
+                      })()}
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white border border-neutral-100 rounded-full flex items-center justify-center shadow-sm text-[8px]">
+                          <ChevronDown size={10} />
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-3 rounded-2xl" align="start">
+                      <div className="grid grid-cols-4 gap-2">
+                        {AVAILABLE_ICONS.map((icon) => (
+                          <button
+                            key={icon.name}
+                            onClick={() => updateLink(link.id, { icon: icon.name })}
+                            className={cn(
+                              "w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:bg-meow-accent/5 hover:text-meow-accent",
+                              link.icon === icon.name ? "bg-meow-accent text-white hover:bg-meow-accent" : "text-meow-charcoal/40"
+                            )}
+                          >
+                            <icon.icon size={20} />
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                </Popover>
+              </div>
 
-        {/* Main Info */}
-        <div className="flex-1 space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <input
-                value={link.title}
-                onChange={(e) => updateLink(link.id, { title: e.target.value })}
-                className="text-lg font-black text-meow-charcoal outline-none bg-transparent w-full"
-                placeholder="Enter title"
-              />
-              <div className="flex items-center gap-2 mt-2 bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-100 focus-within:bg-white focus-within:border-meow-accent/20 transition-all">
-                <LinkIcon size={14} className="text-meow-charcoal/20" />
+              {/* Title and URL */}
+              <div className="flex-1 min-w-0 space-y-2.5">
                 <input
-                  value={link.url}
-                  onChange={(e) => updateLink(link.id, { url: e.target.value })}
-                  className="text-xs font-bold text-meow-charcoal/40 outline-none w-full bg-transparent"
-                  placeholder="https://yourlink.com"
+                  value={link.title}
+                  onChange={(e) => updateLink(link.id, { title: e.target.value })}
+                  className="text-base font-bold text-meow-charcoal outline-none bg-transparent w-full placeholder:text-neutral-200"
+                  placeholder="Link Title"
                 />
+                <div className="flex items-center gap-2 bg-neutral-50/50 px-3 py-2 rounded-xl border border-neutral-100/50 focus-within:bg-white focus-within:border-meow-accent/20 transition-all">
+                  <LinkIcon size={12} className="text-meow-charcoal/20" />
+                  <input
+                    value={link.url}
+                    onChange={(e) => updateLink(link.id, { url: e.target.value })}
+                    onFocus={(e) => updateLink(link.id, { url: "" })}
+                    className="text-[11px] font-medium text-meow-charcoal/40 outline-none w-full bg-transparent placeholder:text-neutral-200"
+                    placeholder="https://meowuwu.in/"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Toggle Button Area */}
-            <div className="flex flex-col items-center gap-1">
-              <button 
-                onClick={() => updateLink(link.id, { variant: link.variant === 'primary' ? 'secondary' : 'primary' })}
-                className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-95 group/btn",
-                  link.variant === 'primary' 
-                    ? "bg-red-50 text-red-500 hover:bg-red-100" 
-                    : "bg-emerald-50 text-emerald-500 hover:bg-emerald-100"
-                )}
-                title={`Switch to ${link.variant === 'primary' ? 'Secondary' : 'Primary'} style`}
-              >
-                {link.variant === 'primary' ? <Smile size={24} /> : <ShoppingBag size={24} />}
-              </button>
-              <span className="text-[8px] font-black uppercase text-meow-charcoal/20">
-                {link.variant}
-              </span>
-            </div>
-
-            {/* Actions Column */}
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteLink(link.id)}
-                className="text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-              >
-                <Trash2 size={18} />
-              </Button>
-            </div>
-          </div>
-
-          {/* Footer Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-neutral-50">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                 <Switch
-                   checked={link.visible}
-                   onCheckedChange={(checked) => updateLink(link.id, { visible: checked })}
-                   className="data-[state=checked]:bg-meow-accent scale-75"
-                 />
-                 <span className="text-[10px] font-black uppercase tracking-wider text-meow-charcoal/40">Visible</span>
+              {/* Desktop Delete Button */}
+              <div className="hidden md:block shrink-0 pt-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => deleteLink(link.id)}
+                  className="text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  <Trash2 size={18} />
+                </Button>
               </div>
-              <div className="w-px h-4 bg-neutral-100" />
-              <div className="flex items-center gap-2 text-meow-charcoal/40">
-                 <MousePointer2 size={12} />
-                 <span className="text-[10px] font-black uppercase tracking-wider">{link.clicks} clicks</span>
+           </div>
+
+           {/* Footer Action Row */}
+           <div className="pt-4 border-t border-neutral-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4 md:gap-6">
+                 {/* Visibility */}
+                 <div className="flex items-center gap-2">
+                    <Switch
+                      checked={link.visible}
+                      onCheckedChange={(checked) => updateLink(link.id, { visible: checked })}
+                      className="data-[state=checked]:bg-meow-accent scale-75"
+                    />
+                    <span className="text-[10px] font-black uppercase tracking-wider text-meow-charcoal/30">Visible</span>
+                 </div>
+
+                 {/* Highlight Toggle (Primary/Secondary) */}
+                 <div className="flex items-center gap-2">
+                    <Switch
+                      checked={link.variant === 'secondary'}
+                      onCheckedChange={(checked) => updateLink(link.id, { variant: checked ? 'secondary' : 'primary' })}
+                      className="data-[state=checked]:bg-emerald-500 scale-75"
+                    />
+                    <span className="text-[10px] font-black uppercase tracking-wider text-meow-charcoal/30">Secondary</span>
+                 </div>
+
+                 <div className="w-px h-3 bg-neutral-100" />
+
+                 {/* Clicks */}
+                 <div className="flex items-center gap-1.5 text-meow-charcoal/30">
+                    <MousePointer2 size={12} />
+                    <span className="text-[10px] font-black uppercase tracking-wider">{link.clicks} clicks</span>
+                 </div>
               </div>
-            </div>
-          </div>
+           </div>
         </div>
       </div>
     </div>
@@ -296,9 +301,9 @@ export default function LinkEditor({ links, onLinksChange, username }: LinkEdito
   const maxReached = links.length >= 10;
 
   return (
-    <div className="max-w-3xl mx-auto w-full px-8 py-12">
+    <div className="max-w-3xl mx-auto w-full px-4 md:px-8 py-6 md:py-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 md:mb-12 gap-6">
         <div>
           <h1 className="text-3xl font-black text-meow-charcoal tracking-tight">
             Link Editor {links.length > 0 && <span className="text-meow-accent/40 ml-2">({links.length}/10)</span>}
@@ -309,7 +314,7 @@ export default function LinkEditor({ links, onLinksChange, username }: LinkEdito
           <Button
             variant="outline"
             onClick={handleShare}
-            className="rounded-full h-12 px-6 font-bold border-2 border-neutral-100 hover:bg-neutral-50 transition-all gap-2"
+            className="rounded-full h-10 md:h-12 px-5 md:px-6 font-bold border-2 border-neutral-100 hover:bg-neutral-50 transition-all gap-2 w-full sm:w-auto"
           >
             <Share2 size={18} />
             Share
@@ -343,7 +348,7 @@ export default function LinkEditor({ links, onLinksChange, username }: LinkEdito
           <div
             onClick={addLink}
             className={cn(
-              "group border-2 border-dashed rounded-[2.5rem] p-12 flex flex-col items-center justify-center gap-4 transition-all shadow-sm active:scale-[0.98]",
+              "group border-2 border-dashed rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-12 flex flex-col items-center justify-center gap-4 transition-all shadow-sm active:scale-[0.98]",
               maxReached
                 ? "border-neutral-100 bg-neutral-50 cursor-not-allowed opacity-60"
                 : "border-meow-accent/20 bg-meow-accent/5 cursor-pointer hover:border-meow-accent hover:bg-meow-accent/10"
