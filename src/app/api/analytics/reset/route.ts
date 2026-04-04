@@ -24,7 +24,7 @@ export async function POST() {
 
     // Reset clicks for all links
     if (user.links) {
-      user.links.forEach((link: any) => {
+      user.links.forEach((link: ILink) => {
         link.clicks = 0;
       });
     }

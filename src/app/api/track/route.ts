@@ -23,9 +23,10 @@ export async function POST(request: Request) {
           await Visit.create({ username, visitorId });
           // If we successfully created it, increment unique views
           await User.updateOne({ username }, { $inc: { uniqueViews: 1 } });
-        } catch (err: any) {
+        } catch (err: unknown) {
+          const error = err as { code?: number };
           // E11000 is a duplicate key error in MongoDB (already visited)
-          if (err.code !== 11000) {
+          if (error.code !== 11000) {
             console.error("Unique tracking error:", err);
           }
         }

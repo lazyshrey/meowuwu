@@ -7,8 +7,6 @@ import {
   TrendingUp, 
   Users, 
   MousePointer2,
-  Calendar,
-  ArrowUpRight,
   PawPrint,
   ExternalLink
 } from "lucide-react";

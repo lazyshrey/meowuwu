@@ -541,7 +541,7 @@ export default function AppearancePage() {
               ].map((pos) => (
                 <button
                   key={pos.id}
-                  onClick={() => setTheme((prev) => ({ ...prev, socialPosition: pos.id as any }))}
+                  onClick={() => setTheme((prev) => ({ ...prev, socialPosition: pos.id as 'top' | 'bottom' }))}
                   className={cn(
                     'group relative p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-3 bg-white',
                     theme.socialPosition === pos.id

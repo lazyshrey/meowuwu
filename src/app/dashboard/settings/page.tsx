@@ -28,9 +28,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
-import { Separator } from '@/components/ui/separator';
 import { DashboardSkeleton } from '@/components/dashboard/SkeletonLoader';
-import LivePreview from '@/components/dashboard/LivePreview';
 
 export default function SettingsPage() {
   const { user: clerkUser } = useUser();
@@ -79,7 +77,7 @@ export default function SettingsPage() {
           }
           if (data.links) {
             setLinks(
-              data.links.map((l: any) => ({
+              data.links.map((l: { _id: string; title: string; url: string; isVisible: boolean; }) => ({
                 id: l._id,
                 title: l.title,
                 url: l.url,
@@ -101,7 +99,7 @@ export default function SettingsPage() {
     fetchData();
   }, []);
 
-  const handleSave = async (updates: any) => {
+  const handleSave = async (updates: Record<string, unknown>) => {
     setIsSaving(true);
     try {
       const res = await fetch('/api/user', {
@@ -231,7 +229,7 @@ export default function SettingsPage() {
                       className='absolute left-4 top-1/2 -translate-y-1/2 text-meow-charcoal/20 group-focus-within:text-meow-accent transition-colors'
                     />
                     <Input
-                      value={(socials as any)[social.id] || ''}
+                      value={(socials as Record<string, string>)[social.id] || ''}
                       onChange={(e) =>
                         setSocials((prev) => ({
                           ...prev,

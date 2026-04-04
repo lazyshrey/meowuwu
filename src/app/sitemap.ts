@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(50000)
       .lean();
 
-    userRoutes = users.map((user: any) => ({
+    userRoutes = users.map((user: { username: string; updatedAt?: Date }) => ({
       url: `${baseUrl}/${user.username}`,
       lastModified: user.updatedAt || new Date(),
       changeFrequency: 'weekly' as const,

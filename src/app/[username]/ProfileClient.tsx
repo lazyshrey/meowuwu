@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -68,6 +69,7 @@ export default function ProfileClient({ user }: { user: IUser }) {
 
   // Performance optimized cursor handling
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(window.innerWidth < 1024);
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', handleResize);
@@ -538,35 +540,35 @@ export default function ProfileClient({ user }: { user: IUser }) {
               </motion.div>
             )}
 
-            {/* Bottom CTA & Branding */}
             <div className='flex flex-col items-center gap-10 w-full px-4'>
-              <motion.a
-                href="/"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.2 }}
-                className='px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer group flex items-center gap-2 border no-underline'
-                style={{
-                  backgroundColor: theme.buttonColor,
-                  color: 'white',
-                  borderColor: `${theme.textColor}10`,
-                }}
-              >
-                <span className='text-xs md:text-sm font-black tracking-tight'>
-                  Join @{user.username} on Meowuwu
-                </span>
-                <PawPrint
-                  size={14}
-                  fill='currentColor'
-                  className='group-hover:rotate-12 transition-transform'
-                />
-              </motion.a>
+              <Link href="/" passHref legacyBehavior>
+                <motion.a
+                  onMouseEnter={() => setIsHovering(true)}
+                  onMouseLeave={() => setIsHovering(false)}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                  className='px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer group flex items-center gap-2 border no-underline'
+                  style={{
+                    backgroundColor: theme.buttonColor,
+                    color: 'white',
+                    borderColor: `${theme.textColor}10`,
+                  }}
+                >
+                  <span className='text-xs md:text-sm font-black tracking-tight'>
+                    Join @{user.username} on Meowuwu
+                  </span>
+                  <PawPrint
+                    size={14}
+                    fill='currentColor'
+                    className='group-hover:rotate-12 transition-transform'
+                  />
+                </motion.a>
+              </Link>
 
               {user.showBranding !== false && (
                 <div className='flex flex-col items-center gap-6 opacity-50 hover:opacity-100 transition-opacity mt-2'>
-                  <a 
+                  <Link 
                     href="/" 
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
@@ -584,7 +586,7 @@ export default function ProfileClient({ user }: { user: IUser }) {
                     >
                       Meowuwu
                     </span>
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
