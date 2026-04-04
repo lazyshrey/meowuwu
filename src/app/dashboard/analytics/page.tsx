@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="flex-1 min-w-0 overflow-y-auto no-scrollbar pb-20 px-8 py-12 max-w-4xl mx-auto">
+    <div className="flex-1 min-w-0 h-full overflow-y-auto no-scrollbar pb-20 px-8 py-12 max-w-4xl mx-auto flex flex-col">
       <header className="mb-12 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-black text-meow-charcoal tracking-tight">Analytics</h1>
@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
         <div className="bg-white rounded-[2.5rem] border-2 border-neutral-50 shadow-sm overflow-hidden">
           {data?.links && data.links.length > 0 ? (
             <div className="flex flex-col divide-y-2 divide-neutral-50">
-              <div className="px-8 py-4 bg-neutral-50/30 grid grid-cols-[1fr,auto] gap-4">
+              <div className="px-8 py-4 bg-neutral-50/30 flex items-center justify-between gap-4">
                 <p className="text-[10px] font-black text-meow-charcoal/30 uppercase tracking-[0.2em]">Link Details</p>
                 <p className="text-[10px] font-black text-meow-charcoal/30 uppercase tracking-[0.2em] text-right">Clicks</p>
               </div>

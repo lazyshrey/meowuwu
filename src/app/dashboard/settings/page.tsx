@@ -124,7 +124,7 @@ export default function SettingsPage() {
   if (isLoading) return <DashboardSkeleton />;
 
   return (
-    <div className='flex-1 min-w-0 overflow-y-auto no-scrollbar pb-20 px-8 py-12 max-w-3xl mx-auto text-meow-charcoal'>
+    <div className='flex-1 min-w-0 h-full overflow-y-auto no-scrollbar pb-20 px-8 py-12 max-w-3xl mx-auto text-meow-charcoal flex flex-col'>
       <header className='mb-12'>
         <h1 className='text-3xl font-black tracking-tight'>Settings</h1>
         <p className='text-sm font-bold opacity-40 mt-1'>
