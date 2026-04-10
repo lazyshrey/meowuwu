@@ -14,6 +14,12 @@
   </p>
 
 <p align="center">
+  <a href="https://payments.cashfree.com/forms/shrey" target="_blank">
+    <img src="https://img.shields.io/badge/Donate-Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
+  </a>
+</p>
+
+<p align="center">
   <a href="#features">Features</a> |
   <a href="#tech-stack">Tech Stack</a> |
   <a href="#quick-start">Quick Start</a> |

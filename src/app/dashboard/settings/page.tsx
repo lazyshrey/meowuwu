@@ -27,6 +27,7 @@ import {
   Sparkles,
   HelpCircle,
 } from 'lucide-react';
+import DonateButton from '@/components/DonateButton';
 import { DiscordIcon } from '@/components/icons/BrandIcons';
 import { DashboardSkeleton } from '@/components/dashboard/SkeletonLoader';
 
@@ -373,6 +374,20 @@ export default function SettingsPage() {
                 </Button>
               </SignOutButton>
             </div>
+          </Card>
+        </section>
+
+        {/* Coffee Break Section */}
+        <section className='space-y-6'>
+          <div className='flex items-center gap-2 mb-2'>
+            <Sparkles size={18} className='text-meow-accent' />
+            <h2 className='text-lg font-black'>Coffee Break</h2>
+          </div>
+          <Card className='p-8 rounded-[2.5rem] border-2 border-neutral-50 shadow-sm flex flex-col items-center gap-4 text-center'>
+            <p className='text-sm font-bold text-meow-charcoal/60'>
+              Enjoying Meowuwu? Help keep the treats coming! 🐾
+            </p>
+            <DonateButton />
           </Card>
         </section>
 

@@ -5,6 +5,7 @@ import { Sparkles, Palette, ShoppingBag, Globe, Camera, Youtube, CheckCircle2, C
 import Link from 'next/link';
 import Image from 'next/image';
 import { Show } from '@clerk/nextjs';
+import DonateButton from './DonateButton';
 
 export default function Hero() {
   return (
@@ -37,17 +38,20 @@ export default function Hero() {
             The purr-fect way to share everything you do. Create a beautiful, cat-themed link card in seconds and let your personality shine.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center gap-4 mb-12">
-            <Show when="signed-out">
-              <Link href="/sign-up" className="bg-meow-accent text-white px-10 py-5 rounded-3xl font-bold text-lg shadow-2xl shadow-meow-accent/30 hover:scale-105 transition-all active:scale-95 text-center">
-                Create your card
-              </Link>
-            </Show>
-            <Show when="signed-in">
-              <Link href="/dashboard" className="bg-meow-accent text-white px-10 py-5 rounded-3xl font-bold text-lg shadow-2xl shadow-meow-accent/30 hover:scale-105 transition-all active:scale-95">
-                Go to Dashboard
-              </Link>
-            </Show>
+          <div className="flex flex-col sm:flex-row items-center gap-6 mb-12">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Show when="signed-out">
+                <Link href="/sign-up" className="bg-meow-accent text-white px-10 py-5 rounded-3xl font-bold text-lg shadow-2xl shadow-meow-accent/30 hover:scale-105 transition-all active:scale-95 text-center">
+                  Create your card
+                </Link>
+              </Show>
+              <Show when="signed-in">
+                <Link href="/dashboard" className="bg-meow-accent text-white px-10 py-5 rounded-3xl font-bold text-lg shadow-2xl shadow-meow-accent/30 hover:scale-105 transition-all active:scale-95">
+                  Go to Dashboard
+                </Link>
+              </Show>
+            </div>
+            <DonateButton />
           </div>
         </motion.div>
 
