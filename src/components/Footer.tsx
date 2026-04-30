@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { PawPrint, Globe, Mail } from 'lucide-react';
+import DonateButton from './DonateButton';
 
 export default function Footer() {
   return (
@@ -21,7 +22,9 @@ export default function Footer() {
             <p className='text-meow-charcoal/50 font-medium leading-relaxed max-w-[240px]'>
               Making the internet a cuter place, one link at a time. 🐾
             </p>
-            <div className='flex items-center gap-4'>
+            <div className='flex items-center gap-4'>              <div className="pt-2">
+              <DonateButton />
+            </div>
               <a
                 href='https://meowuwu.in'
                 className='w-10 h-10 rounded-full bg-meow-accent/5 flex items-center justify-center text-meow-charcoal/40 hover:text-meow-accent hover:bg-meow-accent/10 transition-all'
@@ -34,7 +37,9 @@ export default function Footer() {
               >
                 <Mail size={18} />
               </a>
+
             </div>
+
           </div>
 
           {/* Links Column */}
