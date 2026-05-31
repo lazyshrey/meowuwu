@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     'aesthetic links',
     'bio link',
   ],
-  authors: [{ name: '@ShreyJaiswal1' }],
+  authors: [{ name: '@lazyshrey' }],
   creator: 'Meowuwu',
   metadataBase: new URL('https://meowuwu.in'), // Replace with actual production URL if different
   openGraph: {
